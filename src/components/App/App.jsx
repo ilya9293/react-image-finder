@@ -1,22 +1,34 @@
-import Searchbar from 'components/Searchbar';
+import Searchbar from '../Searchbar';
 import { Component } from 'react';
 import ImageGallery from '../ImageGallery';
-import Button from 'components/Button';
+import Button from '../Button';
 
 class App extends Component {
   state = {
     page: null,
     data: [],
+    query: '',
   };
 
   APIKEY = '26909021-bb302c7a297d7b4d207aa52f9';
   BASE_URL = 'https://pixabay.com/api/';
 
-  getUrlParams = query => {
+  async componentDidUpdate(prevProps, prevState) {
+    if (this.state.page !== prevState.page) {
+      const url = this.getUrlParams();
+      const response = await fetch(`${this.BASE_URL}?${url}`);
+      const data = await response.json();
+      this.setState(prevState => {
+        return { data: [...prevState.data, data.hits] };
+      });
+    }
+  }
+
+  getUrlParams = () => {
     const urlParams = new URLSearchParams({
       image_type: 'photo',
       orientation: 'horizontal',
-      q: query,
+      q: this.state.query,
       page: this.state.page,
       per_page: 12,
       key: this.APIKEY,
@@ -24,35 +36,25 @@ class App extends Component {
     return urlParams;
   };
 
-  clickSubmit = async query => {
-    this.setState({ page: 1 });
-    const url = this.getUrlParams(query);
-    const response = await fetch(`${this.BASE_URL}?${url}`);
-    const data = await response.json();
-    this.setState({ data: data.hits });
+  clickSubmit = query => {
+    this.setState({ page: 1, query });
   };
 
-  clickLoadMore = async () => {
+  clickLoadMore = () => {
     this.setState(prevState => {
-      prevState.page += 1;
+      return { page: prevState.page + 1 };
     });
-    const url = this.getUrlParams();
-    const response = await fetch(`${this.BASE_URL}?${url}`);
-    const data = await response.json();
-    console.log(data);
-    //  this.setState(prevState => ({
-    //    [...prevState.data, data];
-    //  }));
   };
 
   render() {
     const { data } = this.state;
+    console.log(data);
 
     return (
       <div className="app">
         <Searchbar onSubmit={this.clickSubmit} />
         {!!data.length && <ImageGallery data={data} />}
-        {!!data.length && <Button />}
+        {!!data.length && <Button onClick={this.clickLoadMore} />}
       </div>
     );
   }
