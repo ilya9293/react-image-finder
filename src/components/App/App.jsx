@@ -5,6 +5,7 @@ import Button from '../Button';
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import { BallTriangle } from 'react-loader-spinner';
 import api from '../../services/api';
+import Modal from 'components/Modal';
 
 class App extends Component {
   state = {
@@ -78,13 +79,26 @@ class App extends Component {
     });
   };
 
+  fetchLargeImg = async id => {
+    const urlParams = new URLSearchParams({
+      image_type: 'photo',
+      orientation: 'horizontal',
+      id,
+      key: this.APIKEY,
+    });
+    const data = await api(`${this.BASE_URL}?${urlParams}`);
+    console.log(data.hits);
+  };
+
   render() {
     const { data, isLoading, isQuantityItems } = this.state;
 
     return (
       <div className="app">
         <Searchbar onSubmit={this.clickSubmit} />
-        {!!data.length && <ImageGallery data={data} />}
+        {!!data.length && (
+          <ImageGallery data={data} onClick={this.fetchLargeImg} />
+        )}
         {isLoading && (
           <BallTriangle
             color="#00BFFF"
@@ -96,6 +110,7 @@ class App extends Component {
         {!!data.length && isQuantityItems && (
           <Button onClick={this.clickLoadMore} />
         )}
+        {/* <Modal /> */}
       </div>
     );
   }
