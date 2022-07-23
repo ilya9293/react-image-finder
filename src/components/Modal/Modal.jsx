@@ -4,7 +4,7 @@ import { createPortal } from 'react-dom';
 
 const modalRef = document.querySelector('#modal');
 
-function Modal(props) {
+function Modal({ onClick }) {
   return createPortal(
     <div className="overlay">
       <div className="modal">

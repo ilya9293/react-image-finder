@@ -12,9 +12,11 @@ class App extends Component {
     page: null,
     per_page: 12,
     data: [],
+    largeImg: [],
     query: '',
     isLoading: false,
     isQuantityItems: true,
+    isOpenLargeImg: false,
   };
 
   APIKEY = '26909021-bb302c7a297d7b4d207aa52f9';
@@ -86,12 +88,17 @@ class App extends Component {
       id,
       key: this.APIKEY,
     });
-    const data = await api(`${this.BASE_URL}?${urlParams}`);
-    console.log(data.hits);
+    this.setState({ isOpenLargeImg: true });
+    try {
+      const data = await api(`${this.BASE_URL}?${urlParams}`);
+      return data.hits;
+    } catch (err) {
+      alert('Something went wrong');
+    }
   };
 
   render() {
-    const { data, isLoading, isQuantityItems } = this.state;
+    const { data, isLoading, isQuantityItems, isOpenLargeImg } = this.state;
 
     return (
       <div className="app">
@@ -110,7 +117,7 @@ class App extends Component {
         {!!data.length && isQuantityItems && (
           <Button onClick={this.clickLoadMore} />
         )}
-        {/* <Modal /> */}
+        {isOpenLargeImg && <Modal onClick={this.fetchLargeImg} />}
       </div>
     );
   }
