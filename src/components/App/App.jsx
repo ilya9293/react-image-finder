@@ -91,7 +91,7 @@ class App extends Component {
     this.setState({ isOpenLargeImg: true });
     try {
       const data = await api(`${this.BASE_URL}?${urlParams}`);
-      return data.hits;
+      this.setState({ largeImg: data.hits });
     } catch (err) {
       alert('Something went wrong');
     }
@@ -117,7 +117,7 @@ class App extends Component {
         {!!data.length && isQuantityItems && (
           <Button onClick={this.clickLoadMore} />
         )}
-        {isOpenLargeImg && <Modal onClick={this.fetchLargeImg} />}
+        {isOpenLargeImg && <Modal item={this.state.largeImg} />}
       </div>
     );
   }

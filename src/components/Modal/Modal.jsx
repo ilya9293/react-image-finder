@@ -4,17 +4,23 @@ import { createPortal } from 'react-dom';
 
 const modalRef = document.querySelector('#modal');
 
-function Modal({ onClick }) {
+function Modal({ item }) {
   return createPortal(
     <div className="overlay">
-      <div className="modal">
-        <img src="" alt="" />
-      </div>
+      {item.map(({ id, largeImageURL, tags }) => {
+        return (
+          <div className="modal" key={id}>
+            <img src={largeImageURL} alt={tags} />
+          </div>
+        );
+      })}
     </div>,
     modalRef,
   );
 }
 
-Modal.propTypes = {};
+Modal.propTypes = {
+  item: PropTypes.array.isRequired,
+};
 
 export default Modal;
