@@ -97,8 +97,13 @@ class App extends Component {
     }
   };
 
+  сloseModal = () => {
+    this.setState({ isOpenLargeImg: false, largeImg: [] });
+  };
+
   render() {
-    const { data, isLoading, isQuantityItems, isOpenLargeImg } = this.state;
+    const { data, isLoading, isQuantityItems, isOpenLargeImg, largeImg } =
+      this.state;
 
     return (
       <div className="app">
@@ -117,7 +122,7 @@ class App extends Component {
         {!!data.length && isQuantityItems && (
           <Button onClick={this.clickLoadMore} />
         )}
-        {isOpenLargeImg && <Modal item={this.state.largeImg} />}
+        {isOpenLargeImg && <Modal item={largeImg} onClose={this.сloseModal} />}
       </div>
     );
   }
