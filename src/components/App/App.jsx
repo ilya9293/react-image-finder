@@ -14,6 +14,7 @@ class App extends Component {
     data: [],
     largeImg: [],
     query: '',
+    error: 'Something went wrong',
     isLoading: false,
     isQuantityItems: true,
     isOpenLargeImg: false,
@@ -22,30 +23,33 @@ class App extends Component {
   APIKEY = '26909021-bb302c7a297d7b4d207aa52f9';
   BASE_URL = 'https://pixabay.com/api/';
 
-  async componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps, prevState) {
     if (
       this.state.page !== prevState.page ||
       this.state.query !== prevState.query
     ) {
       this.setState({ isLoading: true });
       const url = this.getUrlParams();
-
-      try {
-        const data = await api(`${this.BASE_URL}?${url}`);
-        if (!data.total) {
-          throw new Error('Not Found');
-        }
-        this.renderButton(data.total);
-        this.setState(prevState => {
-          return { data: [...prevState.data, ...data.hits] };
-        });
-      } catch (err) {
-        alert(`${err}. Change your request!`);
-      } finally {
-        this.setState({ isLoading: false });
-      }
+      this.fetchImages(url);
     }
   }
+
+  fetchImages = async url => {
+    try {
+      const data = await api(`${this.BASE_URL}?${url}`);
+      if (!data.total) {
+        throw new Error('Not Found');
+      }
+      this.renderButton(data.total);
+      this.setState(prevState => {
+        return { data: [...prevState.data, ...data.hits] };
+      });
+    } catch (err) {
+      alert(this.state.error);
+    } finally {
+      this.setState({ isLoading: false });
+    }
+  };
 
   renderButton = data => {
     const { per_page, page } = this.state;
@@ -93,7 +97,7 @@ class App extends Component {
       const data = await api(`${this.BASE_URL}?${urlParams}`);
       this.setState({ largeImg: data.hits });
     } catch (err) {
-      alert('Something went wrong');
+      alert(this.state.error);
     }
   };
 
