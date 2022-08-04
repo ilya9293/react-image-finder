@@ -12,17 +12,16 @@ class Searchbar extends Component {
     this.setState({ query: e.target.value });
   };
 
+  handleSubmit = e => {
+    e.preventDefault();
+    this.setState({ query: '' });
+    return this.props.onSubmit(this.state.query.toLowerCase().trim());
+  };
+
   render() {
     return (
       <header className="searchbar">
-        <form
-          onSubmit={e => {
-            e.preventDefault();
-            this.setState({ query: '' });
-            return this.props.onSubmit(this.state.query.toLowerCase().trim());
-          }}
-          className="form"
-        >
+        <form onSubmit={this.handleSubmit} className="form">
           <button type="submit" className="button">
             <span className="buttonlabel"></span>
             <AiOutlineSearch />

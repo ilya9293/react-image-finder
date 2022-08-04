@@ -4,6 +4,8 @@ import ImageGallery from '../ImageGallery';
 import Button from '../Button';
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import { BallTriangle } from 'react-loader-spinner';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import api from '../../services/api';
 import Modal from 'components/Modal';
 
@@ -45,7 +47,7 @@ class App extends Component {
         return { data: [...prevState.data, ...data.hits] };
       });
     } catch (err) {
-      alert(this.state.error);
+      this.notify(err.message);
     } finally {
       this.setState({ isLoading: false });
     }
@@ -72,12 +74,18 @@ class App extends Component {
   };
 
   clickSubmit = query => {
+    if (!query) {
+      this.notify('The string is empty. Enter your request!');
+      return;
+    }
     if (query === this.state.query) {
-      alert('The same request. Please, change!');
+      this.notify('The same request. Please, change!');
       return;
     }
     this.setState({ page: 1, query, data: [], isQuantityItems: true });
   };
+
+  notify = msg => toast(msg);
 
   clickLoadMore = () => {
     this.setState(prevState => {
@@ -127,6 +135,7 @@ class App extends Component {
           <Button onClick={this.clickLoadMore} />
         )}
         {isOpenLargeImg && <Modal item={largeImg} onClose={this.сloseModal} />}
+        <ToastContainer />
       </div>
     );
   }
